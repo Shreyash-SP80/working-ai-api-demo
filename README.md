@@ -123,5 +123,51 @@
                      Cons: Long sequences, less semantic meaning
 ```
 
+### 3. BPE (Byte Pair Encoding) - Most Common Method
+```
+      Training Corpus: "low lower newest widest"
+      Step 1: Count character frequency
+      l:2, o:2, w:2, e:4, r:2, n:1, s:2, t:2, i:1, d:1, space:3
 
+      Step 2: Find most frequent pair: "e" + "s" = "es" (appears 3 times)
+      New vocabulary: "es"
+
+      Step 3: Replace in corpus: "low lower newest widest" → "low lower newes widest"
+
+      Step 4: Repeat until desired vocabulary size
+      Next: "es" + "t" = "est" (appears 2 times)
+      And so on...
+
+      Final tokens might include: "low", "low", "er", "new", "est", "wid", "est"
+```
+
+### 4. Token Limits and Context Window
+```
+      ┌─────────────────────────────────────────────────────────────────┐
+      │                     CONTEXT WINDOW EXAMPLE                      │
+      ├─────────────────────────────────────────────────────────────────┤
+      │ Model: GPT-3.5-turbo │ Context: 4,096 tokens                    │
+      │ Input: 1,000 tokens  │ Output: 500 tokens │ Remaining: 2,596    │ 
+      │                                                                 │
+      │ If input + output > 4,096: ERROR - Context length exceeded      │
+      └─────────────────────────────────────────────────────────────────┘
+
+      Token Counting Example:
+      Input: "Explain machine learning" (3 tokens)
+      + System message: "You are a helpful assistant" (6 tokens)
+      + Previous conversation: 500 tokens
+      + Current response: 200 tokens
+      = Total: 709 tokens used
+```
+
+### 5. Cost Calculation
+```
+      ┌─────────────────────────────────────────────────────────────────┐
+      │                         COST CALCULATION                        │
+      ├─────────────────────────────────────────────────────────────────┤
+      │ Input Tokens: 1,000 × $0.0015 per 1K tokens = $0.0015           │
+      │ Output Tokens: 500 × $0.0020 per 1K tokens = $0.0010            │ 
+      │ Total Cost: $0.0025 for this interaction                        │
+      └─────────────────────────────────────────────────────────────────┘
+```
 
