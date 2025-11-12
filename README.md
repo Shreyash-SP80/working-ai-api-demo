@@ -94,3 +94,15 @@
       Output Probabilities
 ```
 
+## How Tokens Work
+### 1. Tokenization Process
+```
+      Original Text: "I don't like pizza!"
+                    ↓
+      Tokenization: ["I", " don", "'t", " like", " pizza", "!"]
+                    ↓
+      Token IDs:    [40, 243, 83, 128, 12496, 0]
+```
+
+
+
