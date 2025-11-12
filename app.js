@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+// const PORT = process.env.PORT || 4000;
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -144,4 +145,5 @@ app.listen(PORT, () => {
   console.log(`   POST /api/chat`);
   console.log(`   POST /api/completion`);
   console.log(`   POST /api/generate-image`);
+
 });
