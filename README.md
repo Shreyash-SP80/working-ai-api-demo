@@ -104,5 +104,24 @@
       Token IDs:    [40, 243, 83, 128, 12496, 0]
 ```
 
+### 2. Token Types Diagram
+```
+      ┌─────────────────────────────────────────────────────────────┐
+      │                      TOKENIZATION METHODS                    │
+      └─────────────────────────────────────────────────────────────┘
+
+      Word-level:    "I don't like pizza!" → ["I", "don't", "like", "pizza", "!"]
+                     Pros: Easy to understand
+                     Cons: Large vocabulary, out-of-vocabulary problems
+
+      Subword-level: "I don't like pizza!" → ["I", "don", "'t", "like", "pizz", "a", "!"]
+                     Pros: Handles unknown words, smaller vocabulary
+                     Cons: More tokens needed
+
+      Character-level: "I don't like pizza!" → ["I", " ", "d", "o", "n", "'", "t", ...]
+                     Pros: Very small vocabulary
+                     Cons: Long sequences, less semantic meaning
+```
+
 
 
