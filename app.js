@@ -39,7 +39,7 @@ app.post('/api/chat', async (req, res) => {
         { role: 'system', content: 'You are a helpful assistant.' },
         { role: 'user', content: message }
       ],
-      max_tokens: 150,
+      max_tokens: 150, 
       temperature: 0.7,
     });
 
@@ -147,3 +147,4 @@ app.listen(PORT, () => {
   console.log(`   POST /api/generate-image`);
 
 });
+
