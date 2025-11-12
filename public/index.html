@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Demo</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #7209b7;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --success: #4bb543;
+            --danger: #dc3545;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--dark);
+            color: white;
+            padding: 24px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .header p {
+            opacity: 0.85;
+            font-size: 16px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .tab-container {
+            margin-bottom: 24px;
+        }
+
+        .tabs {
+            display: flex;
+            background: var(--light);
+            border-radius: var(--border-radius);
+            padding: 4px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 16px;
+            text-align: center;
+            background: none;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        textarea {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--border-radius);
+            font-size: 15px;
+            font-family: inherit;
+            transition: var(--transition);
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .response {
+            margin-top: 24px;
+            padding: 20px;
+            background: var(--light);
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--primary);
+        }
+
+        .response h3 {
+            color: var(--dark);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .response-content {
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+
+        .meta-info {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #dee2e6;
+            font-size: 14px;
+            color: var(--gray);
+            display: flex;
+            gap: 16px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--primary);
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .image-result {
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .image-result img {
+            max-width: 100%;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .error {
+            color: var(--danger);
+            background: rgba(220, 53, 69, 0.1);
+            padding: 12px;
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--danger);
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .meta-info {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 LLM Demo</h1>
+            <p>Test different AI capabilities in one place</p>
+        </div>
+
+        <div class="content">
+            <div class="tab-container">
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('chat')">💬 Chat</button>
+                    <button class="tab" onclick="switchTab('completion')">📝 Completion</button>
+                    <button class="tab" onclick="switchTab('image')">🎨 Image</button>
+                </div>
+
+                <!-- Chat Tab -->
+                <div id="chat" class="tab-content active">
+                    <div class="input-group">
+                        <label for="chatMessage">Your Message</label>
+                        <textarea 
+                            id="chatMessage" 
+                            placeholder="Ask me anything..."
+                        >What is the capital of France and tell me something interesting about it?</textarea>
+                    </div>
+                    <button class="btn" onclick="sendChat()">
+                        <span>Send Message</span>
+                    </button>
+                    <div id="chatResponse" class="response"></div>
+                </div>
+
+                <!-- Completion Tab -->
+                <div id="completion" class="tab-content">
+                    <div class="input-group">
+                        <label for="completionPrompt">Prompt</label>
+                        <textarea 
+                            id="completionPrompt" 
+                            placeholder="Start writing and let the AI complete it..."
+                        >The future of artificial intelligence will</textarea>
+                    </div>
+                    <button class="btn" onclick="sendCompletion()">
+                        <span>Generate Completion</span>
+                    </button>
+                    <div id="completionResponse" class="response"></div>
+                </div>
+
+                <!-- Image Generation Tab -->
+                <div id="image" class="tab-content">
+                    <div class="input-group">
+                        <label for="imagePrompt">Image Description</label>
+                        <textarea 
+                            id="imagePrompt" 
+                            placeholder="Describe the image you want to generate..."
+                        >A cute cartoon robot reading a book in a library, digital art</textarea>
+                    </div>
+                    <button class="btn" onclick="generateImage()">
+                        <span>Generate Image</span>
+                    </button>
+                    <div id="imageResponse" class="response"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        async function sendChat() {
+            const message = document.getElementById('chatMessage').value;
+            const responseDiv = document.getElementById('chatResponse');
+            
+            if (!message.trim()) {
+                alert('Please enter a message');
+                return;
+            }
+
+            responseDiv.innerHTML = '<div class="loading"><div class="spinner"></div>Thinking...</div>';
+            
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    responseDiv.innerHTML = `
+                        <h3>🤖 Assistant Response</h3>
+                        <div class="response-content">${data.message}</div>
+                        <div class="meta-info">
+                            <span>Model: ${data.model}</span>
+                            <span>Tokens: ${data.usage?.total_tokens || 'N/A'}</span>
+                        </div>
+                    `;
+                } else {
+                    responseDiv.innerHTML = `
+                        <div class="error">
+                            <strong>Error:</strong> ${data.error}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                responseDiv.innerHTML = `
+                    <div class="error">
+                        <strong>Network Error:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        async function sendCompletion() {
+            const prompt = document.getElementById('completionPrompt').value;
+            const responseDiv = document.getElementById('completionResponse');
+            
+            if (!prompt.trim()) {
+                alert('Please enter a prompt');
+                return;
+            }
+
+            responseDiv.innerHTML = '<div class="loading"><div class="spinner"></div>Generating completion...</div>';
+            
+            try {
+                const response = await fetch('/api/completion', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ prompt })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    responseDiv.innerHTML = `
+                        <h3>📝 AI Completion</h3>
+                        <div class="response-content">${data.completion}</div>
+                        <div class="meta-info">
+                            <span>Model: ${data.model}</span>
+                            <span>Tokens: ${data.usage?.total_tokens || 'N/A'}</span>
+                        </div>
+                    `;
+                } else {
+                    responseDiv.innerHTML = `
+                        <div class="error">
+                            <strong>Error:</strong> ${data.error}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                responseDiv.innerHTML = `
+                    <div class="error">
+                        <strong>Network Error:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        async function generateImage() {
+            const prompt = document.getElementById('imagePrompt').value;
+            const responseDiv = document.getElementById('imageResponse');
+            
+            if (!prompt.trim()) {
+                alert('Please enter an image description');
+                return;
+            }
+
+            responseDiv.innerHTML = '<div class="loading"><div class="spinner"></div>Generating image...</div>';
+            
+            try {
+                const response = await fetch('/api/generate-image', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ prompt })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    responseDiv.innerHTML = `
+                        <h3>🎨 Generated Image</h3>
+                        <div class="image-result">
+                            <img src="${data.imageUrl}" alt="Generated Image">
+                        </div>
+                        <div class="meta-info">
+                            <span>Prompt: "${data.prompt}"</span>
+                        </div>
+                    `;
+                } else {
+                    responseDiv.innerHTML = `
+                        <div class="error">
+                            <strong>Error:</strong> ${data.error}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                responseDiv.innerHTML = `
+                    <div class="error">
+                        <strong>Network Error:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
